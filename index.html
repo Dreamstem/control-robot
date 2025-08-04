@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAMSTEAM Robot Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+          
+            border-radius: 9999px;
+            background-color: #2d3748;
+            color: white;
+            font-size: 0.875rem;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center min-h-screen p-4">
+
+    <div id="toast-notification" class="toast"></div>
+
+    <div class="w-full max-w-md mx-auto">
+        <!-- Pantalla de Login -->
+        <div id="login-screen" class="bg-white p-8 rounded-2xl shadow-2xl transition-all duration-500">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">DREAMSTEAM</h1>
+            <p class="text-center text-gray-500 mb-8">Inicia sesión para continuar</p>
+            <div class="space-y-4">
+                <input type="email" placeholder="Correo electrónico" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" placeholder="Contraseña" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <button onclick="login()" class="w-full mt-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">Iniciar sesión</button>
+            <p class="text-center text-sm text-gray-600 mt-6">¿No tienes cuenta? <a href="#" onclick="showRegister()" class="font-medium text-blue-600 hover:underline">Regístrate</a></p>
+        </div>
+
+        <!-- Pantalla de Registro -->
+        <div id="register-screen" class="bg-white p-8 rounded-2xl shadow-2xl transition-all duration-500 hidden">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Crear Cuenta</h1>
+            <div class="space-y-4">
+                <input type="text" placeholder="Nombre completo" id="reg-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" placeholder="Correo electrónico" id="reg-email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" placeholder="Contraseña" id="reg-password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <button onclick="register()" class="w-full mt-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">Registrarse</button>
+            <p class="text-center text-sm text-gray-600 mt-6">¿Ya tienes cuenta? <a href="#" onclick="showLogin()" class="font-medium text-blue-600 hover:underline">Inicia sesión</a></p>
+        </div>
+
+        <!-- Pantalla de Asignaturas -->
+        <div id="subjects-screen" class="bg-white p-8 rounded-2xl shadow-2xl transition-all duration-500 hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Asignaturas STEAM</h2>
+            <div class="space-y-4">
+                <div class="subject-card bg-sky-100 p-4 rounded-lg border border-sky-200">
+                    <h3 class="font-bold text-sky-800">Ciencia</h3>
+                    <p class="text-sm text-sky-700">Explora los principios de la naturaleza, la física y la biología.</p>
+                </div>
+                <div class="subject-card bg-indigo-100 p-4 rounded-lg border border-indigo-200">
+                    <h3 class="font-bold text-indigo-800">Tecnología</h3>
+                    <p class="text-sm text-indigo-700">Aprende sobre innovación digital, software y dispositivos.</p>
+                </div>
+                <div class="subject-card bg-rose-100 p-4 rounded-lg border border-rose-200">
+                    <h3 class="font-bold text-rose-800">Ingeniería</h3>
+                    <p class="text-sm text-rose-700">Diseña, construye y mejora estructuras, máquinas y procesos.</p>
+                </div>
+                <div class="subject-card bg-amber-100 p-4 rounded-lg border border-amber-200">
+                    <h3 class="font-bold text-amber-800">Matemáticas</h3>
+                    <p class="text-sm text-amber-700">Desarrolla habilidades en lógica, cálculo y resolución de problemas.</p>
+                </div>
+            </div>
+            <button onclick="goToControl()" class="w-full mt-6 py-3 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-900 transition-colors">Ir al control del robot</button>
+        </div>
+
+        <!-- Pantalla de Control del Robot -->
+        <div id="robot-screen" class="bg-white p-8 rounded-2xl shadow-2xl transition-all duration-500 hidden">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">Control del Robot</h2>
+            <button id="bt-connect-btn" onclick="connectBluetooth()" class="w-full mb-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10-5 5V2l5 5L7 17"/></svg>
+                <span>Conectar vía Bluetooth</span>
+            </button>
+            <div class="controls grid grid-cols-3 gap-4 justify-items-center text-center">
+                <div></div>
+                <button onclick="moveRobot('forward')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">↑</button>
+                <div></div>
+                <button onclick="moveRobot('left')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">←</button>
+                <button onclick="moveRobot('stop')" class="w-20 h-20 bg-red-500 text-white rounded-full text-2xl font-bold hover:bg-red-600 transition-colors flex items-center justify-center">⏹</button>
+                <button onclick="moveRobot('right')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">→</button>
+                <div></div>
+                <button onclick="moveRobot('backward')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">↓</button>
+                <div></div>
+            </div>
+             <button onclick="showSubjects()" class="w-full mt-8 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Lógica de la aplicación ---
+        let bluetoothDevice = null;
+        let robotCharacteristic = null;
+
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function switchScreen(hideId, showId) {
+            document.getElementById(hideId).classList.add('hidden');
+            document.getElementById(showId).classList.remove('hidden');
+        }
+
+        function showRegister() { switchScreen('login-screen', 'register-screen'); }
+        function showLogin() { switchScreen('register-screen', 'login-screen'); }
+        function showSubjects() { switchScreen('robot-screen', 'subjects-screen'); }
+
+        function login() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                showToast("Por favor, ingresa un correo.");
+                return;
+            }
+            showToast("¡Bienvenido!");
+            switchScreen('login-screen', 'subjects-screen');
+        }
+
+        function register() {
+            showToast("Registro exitoso. Ahora puedes iniciar sesión.");
+            showLogin();
+        }
+
+        function goToControl() {
+            switchScreen('subjects-screen', 'robot-screen');
+        }
+
+        async function connectBluetooth() {
+            if (!navigator.bluetooth) {
+                showToast("Tu navegador no soporta Web Bluetooth.");
+                console.error("Web Bluetooth API no está disponible en este navegador.");
+                return;
+            }
+
+            const connectButton = document.getElementById('bt-connect-btn');
+            connectButton.disabled = true;
+            connectButton.querySelector('span').textContent = 'Buscando...';
+
+            try {
+                console.log('Solicitando dispositivo Bluetooth...');
+                bluetoothDevice = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                });
+
+                console.log('Conectando al servidor GATT...');
+                const server = await bluetoothDevice.gatt.connect();
+                
+                connectButton.querySelector('span').textContent = `Conectado a ${bluetoothDevice.name}`;
+                connectButton.style.backgroundColor = '#28a745';
+
+                showToast(`¡Conectado a ${bluetoothDevice.name}!`);
+                console.log(`Conectado a: ${bluetoothDevice.name}`);
+
+            } catch (error) {
+                let errorMessage = "Error al conectar. Revisa la consola.";
+                if (error.name === 'SecurityError') {
+                    errorMessage = "Acceso a Bluetooth denegado. Asegúrate de estar en un entorno HTTPS.";
+                    console.error("Permissions Policy ha bloqueado el acceso a Web Bluetooth.");
+                } else if (error.name === 'NotFoundError') {
+                    errorMessage = "No se seleccionó ningún dispositivo.";
+                }
+                
+                showToast(errorMessage);
+                console.error("Error de Bluetooth:", error);
+                connectButton.querySelector('span').textContent = 'Conectar vía Bluetooth';
+                connectButton.style.backgroundColor = '';
+            } finally {
+                connectButton.disabled = false;
+            }
+        }
+
+        function moveRobot(direction) {
+            if (!bluetoothDevice || !bluetoothDevice.gatt.connected) {
+                showToast("El robot no está conectado.");
+                console.warn("Intento de mover el robot sin conexión.");
+                return;
+            }
+            
+            showToast(`Moviendo robot: ${direction}`);
+            console.log(`Simulando movimiento: ${direction}`);
+        }
+    </script>
+</body>
+</html>
