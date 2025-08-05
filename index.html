@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Estilos personalizados */
+        /* Custom styles for a polished look and feel */
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
@@ -21,20 +21,57 @@
             left: 50%;
             transform: translateX(-50%);
             padding: 12px 24px;
-          
             border-radius: 9999px;
             background-color: #2d3748;
             color: white;
             font-size: 0.875rem;
-            z-index: 50;
+            z-index: 100;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            transition: all 0.3s ease;
         }
         .toast.show {
             opacity: 1;
             visibility: visible;
             transform: translateX(-50%) translateY(0);
+        }
+        .screen {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .screen.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+            position: absolute;
+        }
+        .chat-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            word-wrap: break-word;
+        }
+        .user-bubble {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            border-bottom-right-radius: 4px;
+            align-self: flex-end;
+        }
+        .ai-bubble {
+            background-color: #e5e7eb; /* gray-200 */
+            color: #1f2937; /* gray-800 */
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+        }
+        .subject-card {
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        #mic-btn.listening {
+            color: #ef4444; /* red-500 */
         }
     </style>
 </head>
@@ -44,8 +81,8 @@
 
     <div class="w-full max-w-md mx-auto">
         <!-- Pantalla de Login -->
-        <div id="login-screen" class="bg-white p-8 rounded-2xl shadow-2xl transition-all duration-500">
-            <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">DREAMSTEAM</h1>
+        <div id="login-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-2 mt-8">DREAMSTEAM</h1>
             <p class="text-center text-gray-500 mb-8">Inicia sesión para continuar</p>
             <div class="space-y-4">
                 <input type="email" placeholder="Correo electrónico" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -56,7 +93,7 @@
         </div>
 
         <!-- Pantalla de Registro -->
-        <div id="register-screen" class="bg-white p-8 rounded-2xl shadow-2xl transition-all duration-500 hidden">
+        <div id="register-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl hidden">
             <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Crear Cuenta</h1>
             <div class="space-y-4">
                 <input type="text" placeholder="Nombre completo" id="reg-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -68,31 +105,65 @@
         </div>
 
         <!-- Pantalla de Asignaturas -->
-        <div id="subjects-screen" class="bg-white p-8 rounded-2xl shadow-2xl transition-all duration-500 hidden">
+        <div id="subjects-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl hidden">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Asignaturas STEAM</h2>
             <div class="space-y-4">
-                <div class="subject-card bg-sky-100 p-4 rounded-lg border border-sky-200">
+                <div onclick="showSubjectDetail('science')" class="subject-card bg-sky-100 p-4 rounded-lg border border-sky-200">
                     <h3 class="font-bold text-sky-800">Ciencia</h3>
                     <p class="text-sm text-sky-700">Explora los principios de la naturaleza, la física y la biología.</p>
                 </div>
-                <div class="subject-card bg-indigo-100 p-4 rounded-lg border border-indigo-200">
+                <div onclick="showSubjectDetail('technology')" class="subject-card bg-indigo-100 p-4 rounded-lg border border-indigo-200">
                     <h3 class="font-bold text-indigo-800">Tecnología</h3>
                     <p class="text-sm text-indigo-700">Aprende sobre innovación digital, software y dispositivos.</p>
                 </div>
-                <div class="subject-card bg-rose-100 p-4 rounded-lg border border-rose-200">
+                <div onclick="showSubjectDetail('engineering')" class="subject-card bg-rose-100 p-4 rounded-lg border border-rose-200">
                     <h3 class="font-bold text-rose-800">Ingeniería</h3>
                     <p class="text-sm text-rose-700">Diseña, construye y mejora estructuras, máquinas y procesos.</p>
                 </div>
-                <div class="subject-card bg-amber-100 p-4 rounded-lg border border-amber-200">
+                <div onclick="showSubjectDetail('math')" class="subject-card bg-amber-100 p-4 rounded-lg border border-amber-200">
                     <h3 class="font-bold text-amber-800">Matemáticas</h3>
                     <p class="text-sm text-amber-700">Desarrolla habilidades en lógica, cálculo y resolución de problemas.</p>
                 </div>
             </div>
-            <button onclick="goToControl()" class="w-full mt-6 py-3 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-900 transition-colors">Ir al control del robot</button>
+            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 <button onclick="showChat()" class="w-full py-3 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600 transition-colors">Chatear con Robot</button>
+                 <button onclick="goToControl()" class="w-full py-3 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-900 transition-colors">Control del Robot</button>
+            </div>
+        </div>
+        
+        <!-- Pantallas de Detalles de Asignaturas -->
+        <div id="subject-detail-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl hidden">
+            <h2 id="subject-title" class="text-3xl font-bold text-gray-800 mb-4"></h2>
+            <p id="subject-content" class="text-gray-600 leading-relaxed"></p>
+            <button onclick="switchScreen('subject-detail-screen', 'subjects-screen')" class="w-full mt-8 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
         </div>
 
+
+        <!-- Pantalla de Chat con el Robot -->
+        <div id="chat-screen" class="screen bg-white rounded-2xl shadow-2xl hidden flex flex-col h-[80vh] max-h-[700px]">
+            <div class="p-4 border-b">
+                <h2 class="text-xl font-bold text-center text-gray-800">Chat con DREAMSTEM</h2>
+            </div>
+            <div id="chat-window" class="flex-1 p-4 space-y-4 overflow-y-auto flex flex-col">
+                <!-- Mensajes del chat se añadirán aquí -->
+            </div>
+            <div class="p-4 border-t">
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="chat-input" placeholder="Escribe o presiona el micrófono..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onkeydown="if(event.key === 'Enter') sendMessage()">
+                    <button id="mic-btn" onclick="toggleVoiceRecognition()" class="p-3 text-gray-500 rounded-full hover:bg-gray-200 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+                    </button>
+                    <button onclick="sendMessage()" class="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+             <button onclick="switchScreen('chat-screen', 'subjects-screen')" class="w-full mt-2 mb-4 mx-auto max-w-[90%] py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
+        </div>
+
+
         <!-- Pantalla de Control del Robot -->
-        <div id="robot-screen" class="bg-white p-8 rounded-2xl shadow-2xl transition-all duration-500 hidden">
+        <div id="robot-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl hidden">
             <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">Control del Robot</h2>
             <button id="bt-connect-btn" onclick="connectBluetooth()" class="w-full mb-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10-5 5V2l5 5L7 17"/></svg>
@@ -100,24 +171,47 @@
             </button>
             <div class="controls grid grid-cols-3 gap-4 justify-items-center text-center">
                 <div></div>
-                <button onclick="moveRobot('forward')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">↑</button>
+                <button onmousedown="moveRobot('forward')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('forward')" ontouchend="moveRobot('stop')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">↑</button>
                 <div></div>
-                <button onclick="moveRobot('left')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">←</button>
+                <button onmousedown="moveRobot('left')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('left')" ontouchend="moveRobot('stop')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">←</button>
                 <button onclick="moveRobot('stop')" class="w-20 h-20 bg-red-500 text-white rounded-full text-2xl font-bold hover:bg-red-600 transition-colors flex items-center justify-center">⏹</button>
-                <button onclick="moveRobot('right')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">→</button>
+                <button onmousedown="moveRobot('right')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('right')" ontouchend="moveRobot('stop')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">→</button>
                 <div></div>
-                <button onclick="moveRobot('backward')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">↓</button>
+                <button onmousedown="moveRobot('backward')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('backward')" ontouchend="moveRobot('stop')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">↓</button>
                 <div></div>
             </div>
-             <button onclick="showSubjects()" class="w-full mt-8 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
+             <button onclick="switchScreen('robot-screen', 'subjects-screen')" class="w-full mt-8 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
         </div>
     </div>
 
     <script>
-        // --- Lógica de la aplicación ---
+        // --- Estado de la aplicación y variables globales ---
         let bluetoothDevice = null;
-        let robotCharacteristic = null;
+        let chatHistory = [];
+        let recognition = null;
+        let isListening = false;
 
+        // --- Contenido de las asignaturas ---
+        const subjectDetails = {
+            science: {
+                title: "Ciencia",
+                content: "La ciencia es el esfuerzo sistemático por construir y organizar el conocimiento en forma de explicaciones y predicciones comprobables sobre el universo. Abarca disciplinas como la física, que estudia la materia y la energía; la química, que se ocupa de las sustancias y sus propiedades; y la biología, el estudio de la vida y los organismos vivos. A través de la ciencia, desarrollamos una comprensión más profunda del mundo que nos rodea."
+            },
+            technology: {
+                title: "Tecnología",
+                content: "La tecnología es la aplicación del conocimiento científico para fines prácticos, especialmente en la industria. Incluye la creación de herramientas, técnicas y sistemas para resolver problemas y mejorar la vida humana. Desde el desarrollo de software y la inteligencia artificial hasta la robótica y las telecomunicaciones, la tecnología impulsa la innovación y da forma a nuestra sociedad moderna."
+            },
+            engineering: {
+                title: "Ingeniería",
+                content: "La ingeniería es la disciplina que utiliza principios científicos, matemáticos y económicos para diseñar, construir y mantener estructuras, máquinas, materiales, dispositivos y procesos. Los ingenieros resuelven problemas prácticos, desde la construcción de puentes y rascacielos (ingeniería civil) hasta el diseño de microchips (ingeniería eléctrica) y el desarrollo de nuevas fuentes de energía (ingeniería mecánica)."
+            },
+            math: {
+                title: "Matemáticas",
+                content: "Las matemáticas son la ciencia de la estructura, el orden y la relación que ha evolucionado a partir de prácticas elementales de contar, medir y describir las formas de los objetos. Es el lenguaje de la ciencia y la ingeniería, proporcionando las herramientas para el análisis, el modelado y la resolución de problemas. Incluye temas como el álgebra, la geometría, el cálculo y la estadística."
+            }
+        };
+
+        // --- Funciones de utilidad y navegación ---
         function showToast(message) {
             const toast = document.getElementById('toast-notification');
             toast.textContent = message;
@@ -128,18 +222,42 @@
         }
 
         function switchScreen(hideId, showId) {
-            document.getElementById(hideId).classList.add('hidden');
-            document.getElementById(showId).classList.remove('hidden');
+            document.querySelectorAll('.screen').forEach(screen => {
+                if (screen.id === showId) {
+                    screen.classList.remove('hidden');
+                } else {
+                    screen.classList.add('hidden');
+                }
+            });
         }
 
         function showRegister() { switchScreen('login-screen', 'register-screen'); }
         function showLogin() { switchScreen('register-screen', 'login-screen'); }
-        function showSubjects() { switchScreen('robot-screen', 'subjects-screen'); }
+        function goToControl() { switchScreen('subjects-screen', 'robot-screen'); }
+        function showChat() { 
+            switchScreen('subjects-screen', 'chat-screen');
+            if (document.getElementById('chat-window').childElementCount === 0) {
+                 setTimeout(() => {
+                    const welcomeMsg = "¡Hola! Soy DREAMSTEM. Pregúntame lo que sea o presiona el micrófono para hablar.";
+                    addMessageToChat('ai', welcomeMsg);
+                }, 500);
+            }
+        }
 
+        function showSubjectDetail(subjectKey) {
+            const detail = subjectDetails[subjectKey];
+            if (detail) {
+                document.getElementById('subject-title').textContent = detail.title;
+                document.getElementById('subject-content').textContent = detail.content;
+                switchScreen('subjects-screen', 'subject-detail-screen');
+            }
+        }
+
+        // --- Lógica de autenticación (simulada) ---
         function login() {
             const email = document.getElementById('email').value;
-            if (!email) {
-                showToast("Por favor, ingresa un correo.");
+            if (!email || !document.getElementById('password').value) {
+                showToast("Por favor, ingresa correo y contraseña.");
                 return;
             }
             showToast("¡Bienvenido!");
@@ -147,52 +265,172 @@
         }
 
         function register() {
+            if (!document.getElementById('reg-name').value || !document.getElementById('reg-email').value || !document.getElementById('reg-password').value) {
+                showToast("Por favor, completa todos los campos.");
+                return;
+            }
             showToast("Registro exitoso. Ahora puedes iniciar sesión.");
             showLogin();
         }
 
-        function goToControl() {
-            switchScreen('subjects-screen', 'robot-screen');
+        // --- Lógica del Chat con IA ---
+        function addMessageToChat(sender, text) {
+            const chatWindow = document.getElementById('chat-window');
+            const bubble = document.createElement('div');
+            bubble.classList.add('chat-bubble', sender === 'user' ? 'user-bubble' : 'ai-bubble');
+            bubble.textContent = text;
+            chatWindow.appendChild(bubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const userMessage = input.value.trim();
+            if (!userMessage) return;
+
+            addMessageToChat('user', userMessage);
+            input.value = '';
+            
+            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('chat-bubble', 'ai-bubble');
+            typingIndicator.innerHTML = '<span class="animate-pulse">Pensando...</span>';
+            typingIndicator.id = 'typing-indicator';
+            document.getElementById('chat-window').appendChild(typingIndicator);
+
+            try {
+                const aiResponseText = await getAiResponse(userMessage);
+                document.getElementById('typing-indicator').remove();
+                addMessageToChat('ai', aiResponseText);
+                chatHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
+            } catch (error) {
+                 document.getElementById('typing-indicator').remove();
+                 const errorMsg = "Lo siento, no pude procesar tu solicitud. Inténtalo de nuevo.";
+                 addMessageToChat('ai', errorMsg);
+                 console.error("Error fetching AI response:", error);
+            }
         }
 
+        async function getAiResponse(prompt) {
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            
+            // System instruction to guide the model's behavior
+            const systemInstruction = {
+                role: "system",
+                parts: [{ text: "Eres DREAMSTEM, un asistente de IA superinteligente con todo el poder de la IA de Google. Tu propósito es ser un tutor experto para estudiantes de STEAM. Responde a todas las preguntas de manera completa y profunda, resolviendo problemas matemáticos complejos, desglosando conceptos científicos, explicando ingeniería y tecnología, y analizando problemas razonados. Actúa como un genio amigable y servicial." }]
+            };
+
+            const payload = {
+                contents: [systemInstruction, ...chatHistory.slice(-5)] // Add instruction before history
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+
+            const result = await response.json();
+            
+            if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts) {
+                return result.candidates[0].content.parts[0].text;
+            } else {
+                console.error("Unexpected API response structure:", result);
+                return "No pude encontrar una respuesta válida.";
+            }
+        }
+
+        // --- Lógica de Reconocimiento de Voz (Speech-to-Text) ---
+        function setupSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.lang = 'es-MX';
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = () => {
+                    isListening = true;
+                    document.getElementById('mic-btn').classList.add('listening');
+                    showToast("Escuchando...");
+                };
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('chat-input').value = transcript;
+                    sendMessage(); // Send message automatically after transcription
+                };
+
+                recognition.onerror = (event) => {
+                    showToast(`Error de voz: ${event.error}`);
+                    console.error("Speech recognition error", event);
+                };
+
+                recognition.onend = () => {
+                    isListening = false;
+                    document.getElementById('mic-btn').classList.remove('listening');
+                };
+            } else {
+                showToast("El reconocimiento de voz no es compatible con tu navegador.");
+            }
+        }
+
+        function toggleVoiceRecognition() {
+            if (!recognition) setupSpeechRecognition();
+            if (!recognition) return;
+
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
+        // --- Lógica de Control del Robot y Bluetooth ---
         async function connectBluetooth() {
             if (!navigator.bluetooth) {
                 showToast("Tu navegador no soporta Web Bluetooth.");
-                console.error("Web Bluetooth API no está disponible en este navegador.");
                 return;
             }
 
             const connectButton = document.getElementById('bt-connect-btn');
+            const buttonSpan = connectButton.querySelector('span');
+            
+            if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+                bluetoothDevice.gatt.disconnect();
+                buttonSpan.textContent = 'Conectar vía Bluetooth';
+                connectButton.style.backgroundColor = '';
+                showToast("Robot desconectado.");
+                bluetoothDevice = null;
+                return;
+            }
+
             connectButton.disabled = true;
-            connectButton.querySelector('span').textContent = 'Buscando...';
+            buttonSpan.textContent = 'Buscando...';
 
             try {
-                console.log('Solicitando dispositivo Bluetooth...');
                 bluetoothDevice = await navigator.bluetooth.requestDevice({
                     acceptAllDevices: true,
                 });
 
-                console.log('Conectando al servidor GATT...');
                 const server = await bluetoothDevice.gatt.connect();
                 
-                connectButton.querySelector('span').textContent = `Conectado a ${bluetoothDevice.name}`;
+                buttonSpan.textContent = `Conectado a ${bluetoothDevice.name}`;
                 connectButton.style.backgroundColor = '#28a745';
-
                 showToast(`¡Conectado a ${bluetoothDevice.name}!`);
-                console.log(`Conectado a: ${bluetoothDevice.name}`);
 
             } catch (error) {
                 let errorMessage = "Error al conectar. Revisa la consola.";
-                if (error.name === 'SecurityError') {
-                    errorMessage = "Acceso a Bluetooth denegado. Asegúrate de estar en un entorno HTTPS.";
-                    console.error("Permissions Policy ha bloqueado el acceso a Web Bluetooth.");
-                } else if (error.name === 'NotFoundError') {
+                if (error.name === 'NotFoundError') {
                     errorMessage = "No se seleccionó ningún dispositivo.";
                 }
-                
                 showToast(errorMessage);
-                console.error("Error de Bluetooth:", error);
-                connectButton.querySelector('span').textContent = 'Conectar vía Bluetooth';
+                buttonSpan.textContent = 'Conectar vía Bluetooth';
                 connectButton.style.backgroundColor = '';
             } finally {
                 connectButton.disabled = false;
@@ -202,13 +440,14 @@
         function moveRobot(direction) {
             if (!bluetoothDevice || !bluetoothDevice.gatt.connected) {
                 showToast("El robot no está conectado.");
-                console.warn("Intento de mover el robot sin conexión.");
                 return;
             }
-            
             showToast(`Moviendo robot: ${direction}`);
-            console.log(`Simulando movimiento: ${direction}`);
+            console.log(`Simulando envío de comando: ${direction}`);
         }
+        
+        // Initialize speech recognition setup when the script loads
+        setupSpeechRecognition();
     </script>
 </body>
 </html>
