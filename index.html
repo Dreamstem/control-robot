@@ -14,7 +14,42 @@
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: #f0f2f5; /* Light background for professional feel */
+            color: #1f2937; /* gray-800 */
         }
+
+        /* Dark mode base styles */
+        body.dark {
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* gray-200 */
+        }
+
+        .screen {
+            background-color: white;
+            transition: background-color 0.3s ease, color 0.3s ease, opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            border-radius: 1.5rem; /* rounded-2xl */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-2xl */
+            padding: 2rem; /* Consistent padding */
+        }
+        body.dark .screen {
+            background-color: #1e293b; /* slate-800 */
+            color: #e2e8f0; /* gray-200 */
+        }
+
+        input, button, textarea {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            border-radius: 0.5rem; /* rounded-lg */
+        }
+        body.dark input, body.dark textarea {
+            background-color: #334155; /* slate-700 */
+            border-color: #475569; /* slate-600 */
+            color: #e2e8f0; /* gray-200 */
+        }
+        body.dark input::placeholder, body.dark textarea::placeholder {
+            color: #94a3b8; /* slate-400 */
+        }
+
         .toast {
             position: fixed;
             bottom: 20px;
@@ -35,20 +70,19 @@
             visibility: visible;
             transform: translateX(-50%) translateY(0);
         }
-        .screen {
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-        }
         .screen.hidden {
             opacity: 0;
             transform: scale(0.95);
             pointer-events: none;
             position: absolute;
         }
+
         .chat-bubble {
             max-width: 80%;
             padding: 12px 16px;
             border-radius: 20px;
             word-wrap: break-word;
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
         }
         .user-bubble {
             background-color: #3b82f6; /* blue-500 */
@@ -62,63 +96,224 @@
             border-bottom-left-radius: 4px;
             align-self: flex-start;
         }
+        body.dark .ai-bubble {
+            background-color: #334155; /* slate-700 */
+            color: #e2e8f0; /* gray-200 */
+        }
+        .chat-bubble img {
+            max-width: 100%;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
         .subject-card {
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+            border-radius: 0.75rem; /* rounded-lg */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* subtle shadow */
         }
         .subject-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.1);
         }
+        body.dark .subject-card {
+            background-color: #334155; /* slate-700 */
+            border-color: #475569; /* slate-600 */
+        }
+        body.dark .subject-card .text-sky-800, body.dark .subject-card .text-indigo-800,
+        body.dark .subject-card .text-rose-800, body.dark .subject-card .text-amber-800 {
+            color: #cbd5e0; /* gray-300 for titles in dark mode */
+        }
+        body.dark .subject-card .text-sky-700, body.dark .subject-card .text-indigo-700,
+        body.dark .subject-card .text-rose-700, body.dark .subject-card .text-amber-700 {
+            color: #a0aec0; /* gray-400 for text in dark mode */
+        }
+
+
         #mic-btn.listening {
             color: #ef4444; /* red-500 */
+        }
+
+        .battery-indicator {
+            display: none; /* Hidden by default */
+        }
+        .battery-indicator.visible {
+            display: block; /* Shown when connected */
+        }
+
+        /* General button styles for better dark mode compatibility */
+        .btn-primary {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            font-weight: 600; /* font-semibold */
+            padding: 0.75rem 1rem; /* py-3 px-4 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            transition: background-color 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb; /* blue-600 */
+        }
+        .btn-secondary {
+            background-color: #e2e8f0; /* gray-200 */
+            color: #4a5568; /* gray-700 */
+            font-weight: 600;
+            padding: 0.5rem 1rem; /* py-2 px-4 */
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #cbd5e0; /* gray-300 */
+        }
+        body.dark .btn-secondary {
+            background-color: #4a5568; /* gray-700 */
+            color: #e2e8f0; /* gray-200 */
+        }
+        body.dark .btn-secondary:hover {
+            background-color: #64748b; /* gray-600 */
+        }
+
+        /* Specific control buttons */
+        .control-button {
+            background-color: #e2e8f0; /* gray-200 */
+            color: #4a5568; /* gray-700 */
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .control-button:hover {
+            background-color: #cbd5e0; /* gray-300 */
+        }
+        body.dark .control-button {
+            background-color: #4a5568; /* gray-700 */
+            color: #e2e8f0; /* gray-200 */
+        }
+        body.dark .control-button:hover {
+            background-color: #64748b; /* gray-600 */
+        }
+        .control-button.stop {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+        }
+        .control-button.stop:hover {
+            background-color: #dc2626; /* red-600 */
+        }
+
+        /* Profile card styles */
+        .profile-option-card {
+            background-color: #f8fafc; /* bg-slate-50 */
+            border-radius: 0.75rem; /* rounded-lg */
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        .profile-option-card:hover {
+            background-color: #e2e8f0; /* gray-200 */
+            transform: translateY(-2px);
+        }
+        body.dark .profile-option-card {
+            background-color: #334155; /* slate-700 */
+            color: #e2e8f0; /* gray-200 */
+        }
+        body.dark .profile-option-card:hover {
+            background-color: #475569; /* slate-600 */
+        }
+        body.dark .profile-option-card .text-gray-600 {
+            color: #a0aec0; /* gray-400 */
+        }
+
+        /* Image preview in chat input */
+        #image-preview-container {
+            display: none; /* Hidden by default */
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background-color: #f0f4f8; /* light gray */
+            position: relative;
+        }
+        body.dark #image-preview-container {
+            background-color: #334155; /* slate-700 */
+        }
+        #image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 0.25rem;
+            object-fit: cover;
+        }
+        #remove-image-btn {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            cursor: pointer;
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center min-h-screen p-4">
     <div id="toast-notification" class="toast"></div>
+
     <div class="w-full max-w-md mx-auto">
         <!-- Pantalla de Login -->
-        <div id="login-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl">
-            <h1 class="text-3xl font-bold text-center text-gray-800 mb-2 mt-8">DREAMSTEAM</h1>
+        <div id="login-screen" class="screen">
+            <h1 class="text-3xl font-bold text-center mb-2 mt-8">DREAMSTEAM</h1>
             <p class="text-center text-gray-500 mb-8">Inicia sesión para continuar</p>
             <div class="space-y-4">
-                <input type="email" placeholder="Correo electrónico" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="password" placeholder="Contraseña" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" placeholder="Correo electrónico" id="email" class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" placeholder="Contraseña" id="password" class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
-            <button onclick="login()" class="w-full mt-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">Iniciar sesión</button>
+            <button onclick="login()" class="w-full mt-6 btn-primary">Iniciar sesión</button>
             <p class="text-center text-sm text-gray-600 mt-6">¿No tienes cuenta? <a href="#" onclick="showRegister()" class="font-medium text-blue-600 hover:underline">Regístrate</a></p>
         </div>
 
         <!-- Pantalla de Registro -->
-        <div id="register-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl hidden">
-            <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Crear Cuenta</h1>
+        <div id="register-screen" class="screen hidden">
+            <h1 class="text-3xl font-bold text-center mb-8">Crear Cuenta</h1>
             <div class="space-y-4">
-                <input type="text" placeholder="Nombre completo" id="reg-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="email" placeholder="Correo electrónico" id="reg-email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="password" placeholder="Contraseña" id="reg-password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" placeholder="Nombre completo" id="reg-name" class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" placeholder="Correo electrónico" id="reg-email" class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" placeholder="Contraseña" id="reg-password" class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
-            <button onclick="register()" class="w-full mt-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">Registrarse</button>
+            <button onclick="register()" class="w-full mt-6 btn-primary">Registrarse</button>
             <p class="text-center text-sm text-gray-600 mt-6">¿Ya tienes cuenta? <a href="#" onclick="showLogin()" class="font-medium text-blue-600 hover:underline">Inicia sesión</a></p>
         </div>
 
-        <!-- Pantalla de Asignaturas -->
-        <div id="subjects-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl hidden">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6">Asignaturas STEAM</h2>
+        <!-- Pantalla de Asignaturas (con botones de perfil y modo oscuro) -->
+        <div id="subjects-screen" class="screen hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">Asignaturas STEAM</h2>
+                <div class="flex space-x-2">
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-full btn-secondary" title="Alternar Modo Oscuro">
+                        <svg id="dark-mode-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                    <button onclick="showProfile()" class="p-2 rounded-full btn-secondary" title="Ver Perfil">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </button>
+                </div>
+            </div>
             <div class="space-y-4">
-                <div onclick="showSubjectDetail('science')" class="subject-card bg-sky-100 p-4 rounded-lg border border-sky-200">
+                <div onclick="showSubjectDetail('science')" class="subject-card bg-sky-100 p-4 border border-sky-200">
                     <h3 class="font-bold text-sky-800">Ciencia</h3>
                     <p class="text-sm text-sky-700">Explora los principios de la naturaleza, la física y la biología.</p>
                 </div>
-                <div onclick="showSubjectDetail('technology')" class="subject-card bg-indigo-100 p-4 rounded-lg border border-indigo-200">
+                <div onclick="showSubjectDetail('technology')" class="subject-card bg-indigo-100 p-4 border border-indigo-200">
                     <h3 class="font-bold text-indigo-800">Tecnología</h3>
                     <p class="text-sm text-indigo-700">Aprende sobre innovación digital, software y dispositivos.</p>
                 </div>
-                <div onclick="showSubjectDetail('engineering')" class="subject-card bg-rose-100 p-4 rounded-lg border border-rose-200">
+                <div onclick="showSubjectDetail('engineering')" class="subject-card bg-rose-100 p-4 border border-rose-200">
                     <h3 class="font-bold text-rose-800">Ingeniería</h3>
                     <p class="text-sm text-rose-700">Diseña, construye y mejora estructuras, máquinas y procesos.</p>
                 </div>
-                <div onclick="showSubjectDetail('math')" class="subject-card bg-amber-100 p-4 rounded-lg border border-amber-200">
+                <div onclick="showSubjectDetail('math')" class="subject-card bg-amber-100 p-4 border border-amber-200">
                     <h3 class="font-bold text-amber-800">Matemáticas</h3>
                     <p class="text-sm text-amber-700">Desarrolla habilidades en lógica, cálculo y resolución de problemas.</p>
                 </div>
@@ -130,63 +325,124 @@
         </div>
 
         <!-- Pantallas de Detalles de Asignaturas -->
-        <div id="subject-detail-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl hidden">
-            <h2 id="subject-title" class="text-3xl font-bold text-gray-800 mb-4"></h2>
+        <div id="subject-detail-screen" class="screen hidden">
+            <h2 id="subject-title" class="text-3xl font-bold mb-4"></h2>
             <p id="subject-content" class="text-gray-600 leading-relaxed"></p>
-            <button onclick="switchScreen('subject-detail-screen', 'subjects-screen')" class="w-full mt-8 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
+            <button onclick="switchScreen('subject-detail-screen', 'subjects-screen')" class="w-full mt-8 py-2 text-sm btn-secondary">Volver a Asignaturas</button>
+        </div>
+
+        <!-- Pantalla de Perfil de Usuario (Nueva y Profesional) -->
+        <div id="profile-screen" class="screen hidden">
+            <h2 class="text-3xl font-bold text-center mb-6">Mi Perfil Profesional</h2>
+            <div class="text-center mb-6">
+                <div class="w-24 h-24 mx-auto bg-blue-200 dark:bg-blue-700 rounded-full flex items-center justify-center text-5xl font-bold text-blue-800 dark:text-blue-200 mb-4">
+                    <span id="profile-initial">U</span>
+                </div>
+                <p class="text-2xl font-semibold"><span id="profile-user-name"></span></p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">miembro desde 2024</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="profile-option-card flex items-center space-x-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <div>
+                        <p class="font-medium">Seguridad de la Cuenta</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Gestiona tu contraseña y métodos de autenticación.</p>
+                    </div>
+                </div>
+                <div class="profile-option-card flex items-center space-x-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-500"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <div>
+                        <p class="font-medium">Privacidad</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Controla tus datos y preferencias de privacidad.</p>
+                    </div>
+                </div>
+                <div class="profile-option-card flex items-center space-x-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-orange-500"><path d="M22 17H2a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-3z"></path><path d="M12 9V2l3 3-3 3"></path><path d="M12 9V2l-3 3 3 3"></path></svg>
+                    <div>
+                        <p class="font-medium">Actividad Reciente</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Revisa tus sesiones y acciones en la app.</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="switchScreen('profile-screen', 'subjects-screen')" class="w-full mt-8 py-2 btn-secondary">Volver a Asignaturas</button>
         </div>
 
         <!-- Pantalla de Chat con el Robot -->
-        <div id="chat-screen" class="screen bg-white rounded-2xl shadow-2xl hidden flex flex-col h-[80vh] max-h-[700px]">
-            <div class="p-4 border-b">
-                <h2 class="text-xl font-bold text-center text-gray-800">Chat con DREAMSTEAM</h2>
+        <div id="chat-screen" class="screen hidden flex flex-col h-[95vh] max-h-[900px]"> <!-- Made chat screen larger -->
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-xl font-bold text-center">Chat con DREAMSTEAM</h2>
             </div>
             <div id="chat-window" class="flex-1 p-4 space-y-4 overflow-y-auto flex flex-col">
                 <!-- Mensajes del chat se añadirán aquí -->
             </div>
-            <div class="p-4 border-t">
-                <div class="flex items-center space-x-2">
-                    <input type="text" id="chat-input" placeholder="Escribe o presiona el micrófono..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onkeydown="if(event.key === 'Enter') sendMessage()">
-                    <button id="mic-btn" onclick="toggleVoiceRecognition()" class="p-3 text-gray-500 rounded-full hover:bg-gray-200 transition-colors">
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                <!-- Image Preview Container -->
+                <div id="image-preview-container" class="flex items-center space-x-2">
+                    <img id="image-preview" src="#" alt="Image Preview" class="hidden">
+                    <button id="remove-image-btn" class="hidden">X</button>
+                </div>
+                <div class="flex items-center space-x-2 mt-2">
+                    <input type="file" id="image-input" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+                    <button onclick="document.getElementById('image-input').click()" class="p-3 text-gray-500 rounded-full hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600" title="Adjuntar Imagen">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    </button>
+                    <input type="text" id="chat-input" placeholder="Escribe un mensaje o describe tu imagen..." class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="mic-btn" onclick="toggleVoiceRecognition()" class="p-3 text-gray-500 rounded-full hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
                     </button>
-                    <button onclick="sendMessage()" class="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
+                    <button onclick="sendMessage()" class="p-3 btn-primary rounded-full">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </button>
                 </div>
             </div>
-            <button onclick="switchScreen('chat-screen', 'subjects-screen')" class="w-full mt-2 mb-4 mx-auto max-w-[90%] py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
+            <button onclick="switchScreen('chat-screen', 'subjects-screen')" class="w-full mt-2 mb-4 mx-auto max-w-[90%] py-2 text-sm btn-secondary">Volver a Asignaturas</button>
         </div>
 
         <!-- Pantalla de Control del Robot -->
-        <div id="robot-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl hidden">
-            <h2 class="text-3xl font-bold text-center text-gray-800 mb-4">Control del Robot</h2>
-            <button id="bt-connect-btn" onclick="connectBluetooth()" class="w-full mb-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
+        <div id="robot-screen" class="screen hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">Control del Robot</h2>
+                <div class="flex space-x-2">
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-full btn-secondary" title="Alternar Modo Oscuro">
+                        <svg id="dark-mode-icon-robot" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
+                    <button onclick="showProfile()" class="p-2 rounded-full btn-secondary" title="Ver Perfil">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div id="battery-status-container" class="text-center mb-6 battery-indicator">
+                <p class="text-lg font-semibold">Nivel de Batería: <span id="robot-battery-level">--%</span></p>
+            </div>
+            <button id="bt-connect-btn" onclick="connectBluetooth()" class="w-full mb-6 py-3 btn-primary flex items-center justify-center space-x-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10-5 5V2l5 5L7 17"/></svg>
                 <span>Conectar vía Bluetooth</span>
             </button>
             <div class="controls grid grid-cols-3 gap-4 justify-items-center text-center">
                 <div></div>
-                <button onmousedown="moveRobot('forward')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('forward')" ontouchend="moveRobot('stop')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">↑</button>
+                <button onmousedown="moveRobot('forward')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('forward')" ontouchend="moveRobot('stop')" class="w-20 h-20 rounded-full text-3xl control-button">↑</button>
                 <div></div>
-                <button onmousedown="moveRobot('left')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('left')" ontouchend="moveRobot('stop')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">←</button>
-                <button onclick="moveRobot('stop')" class="w-20 h-20 bg-red-500 text-white rounded-full text-2xl font-bold hover:bg-red-600 transition-colors flex items-center justify-center">⏹</button>
-                <button onmousedown="moveRobot('right')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('right')" ontouchend="moveRobot('stop')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">→</button>
+                <button onmousedown="moveRobot('left')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('left')" ontouchend="moveRobot('stop')" class="w-20 h-20 rounded-full text-3xl control-button">←</button>
+                <button onclick="moveRobot('stop')" class="w-20 h-20 rounded-full text-2xl control-button stop">⏹</button>
+                <button onmousedown="moveRobot('right')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('right')" ontouchend="moveRobot('stop')" class="w-20 h-20 rounded-full text-3xl control-button">→</button>
                 <div></div>
-                <button onmousedown="moveRobot('backward')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('backward')" ontouchend="moveRobot('stop')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">↓</button>
+                <button onmousedown="moveRobot('backward')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('backward')" ontouchend="moveRobot('stop')" class="w-20 h-20 rounded-full text-3xl control-button">↓</button>
                 <div></div>
             </div>
-            <button onclick="switchScreen('robot-screen', 'subjects-screen')" class="w-full mt-8 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
+            <button onclick="switchScreen('robot-screen', 'subjects-screen')" class="w-full mt-8 py-2 text-sm btn-secondary">Volver a Asignaturas</button>
         </div>
     </div>
 
     <script>
         // --- Estado de la aplicación y variables globales ---
         let bluetoothDevice = null;
-        let recognition = null;
-        let isListening = false;
         let userName = null; // Variable para guardar el nombre del usuario
         let chatHistory = []; // History for the AI model
+        let recognition = null;
+        let isListening = false;
+        let selectedImageBase64 = null; // To store the selected image data
 
         // --- Contenido de las asignaturas ---
         const subjectDetails = {
@@ -226,6 +482,22 @@
                     screen.classList.add('hidden');
                 }
             });
+            // Update profile user name and initial if navigating to profile screen
+            if (showId === 'profile-screen') {
+                document.getElementById('profile-user-name').textContent = userName;
+                document.getElementById('profile-initial').textContent = userName ? userName.charAt(0).toUpperCase() : 'U';
+            }
+            // Update robot battery level visibility when navigating to robot control screen
+            if (showId === 'robot-screen') {
+                if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+                    document.getElementById('battery-status-container').classList.add('visible');
+                    updateRobotBatteryLevel(); // Update simulated battery
+                } else {
+                    document.getElementById('battery-status-container').classList.remove('visible');
+                }
+            } else {
+                document.getElementById('battery-status-container').classList.remove('visible');
+            }
         }
 
         function showRegister() {
@@ -242,11 +514,11 @@
 
         function showChat() {
             switchScreen('subjects-screen', 'chat-screen');
-            if (chatHistory.length === 0) { // Only add welcome message and system instruction if chat is empty
+            if (document.getElementById('chat-window').childElementCount === 0) {
                 // System instruction for the AI about its identity and purpose
                 chatHistory.push({
                     role: "user",
-                    parts: [{ text: "Eres DREAMSTEAM, un robot educativo diseñado por ingenieros de la Universidad Tecnológica de Santa Catarina. Tu propósito es ayudar a estudiantes con temas de Ciencia, Tecnología, Ingeniería y Matemáticas (STEAM). Responde de manera amigable, clara y completa." }]
+                    parts: [{ text: `Eres DREAMSTEAM, un robot educativo diseñado por ingenieros de la Universidad Tecnológica de Santa Catarina (UTSC). Tu propósito es ayudar a estudiantes con temas de Ciencia, Tecnología, Ingeniería y Matemáticas (STEAM). Responde de manera amigable, clara y completa. Si la respuesta es una lista o tiene varios puntos, usa viñetas con el símbolo '•' y saltos de línea para cada punto. También puedes interpretar imágenes que te envíen. Asegúrate de que tus respuestas sean siempre bien estructuradas y fáciles de leer.` }]
                 });
                 chatHistory.push({
                     role: "model",
@@ -261,6 +533,12 @@
             }
         }
 
+        function showProfile() {
+            // Get the ID of the currently visible screen to hide it
+            const currentScreenId = document.querySelector('.screen:not(.hidden)').id;
+            switchScreen(currentScreenId, 'profile-screen');
+        }
+
         function showSubjectDetail(subjectKey) {
             const detail = subjectDetails[subjectKey];
             if (detail) {
@@ -273,33 +551,49 @@
         // --- Lógica de autenticación (simulada) ---
         function login() {
             const email = document.getElementById('email').value;
-            if (!email || !document.getElementById('password').value) {
+            const password = document.getElementById('password').value;
+            if (!email || !password) {
                 showToast("Por favor, ingresa correo y contraseña.");
                 return;
             }
-            const welcomeMessage = userName ? `¡Bienvenido de vuelta, ${userName}!` : "¡Bienvenido!";
-            showToast(welcomeMessage);
+            // Simulate successful login - set username from email part before @
+            userName = email.split('@')[0];
+            showToast(`¡Bienvenido de vuelta, ${userName}!`);
             switchScreen('login-screen', 'subjects-screen');
         }
 
         function register() {
             const nameInput = document.getElementById('reg-name');
-            if (!nameInput.value || !document.getElementById('reg-email').value || !document.getElementById('reg-password').value) {
+            const emailInput = document.getElementById('reg-email');
+            const passwordInput = document.getElementById('reg-password');
+
+            if (!nameInput.value || !emailInput.value || !passwordInput.value) {
                 showToast("Por favor, completa todos los campos.");
                 return;
             }
-            // Guardamos el primer nombre del usuario para personalizar la experiencia
+            // Save the first name of the user for personalization
             userName = nameInput.value.trim().split(' ')[0];
             showToast(`Registro exitoso, ${userName}. Ahora puedes iniciar sesión.`);
             showLogin();
         }
 
         // --- Lógica del Chat con IA (Integración con Gemini API) ---
-        function addMessageToChat(sender, text) {
+        function addMessageToChat(sender, text, imageUrl = null) {
             const chatWindow = document.getElementById('chat-window');
             const bubble = document.createElement('div');
             bubble.classList.add('chat-bubble', sender === 'user' ? 'user-bubble' : 'ai-bubble');
-            bubble.textContent = text;
+            
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = 'Imagen enviada';
+                bubble.appendChild(img);
+            }
+            if (text) {
+                const textNode = document.createElement('div');
+                textNode.textContent = text;
+                bubble.appendChild(textNode);
+            }
             chatWindow.appendChild(bubble);
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
@@ -307,11 +601,41 @@
         async function sendMessage() {
             const input = document.getElementById('chat-input');
             const userMessage = input.value.trim();
-            if (!userMessage) return;
+            const imageInput = document.getElementById('image-input');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
 
-            addMessageToChat('user', userMessage);
-            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            if (!userMessage && !selectedImageBase64) {
+                showToast("Por favor, escribe un mensaje o selecciona una imagen.");
+                return;
+            }
+
+            const messageParts = [];
+            let displayImageUrl = null;
+
+            if (selectedImageBase64) {
+                messageParts.push({
+                    inlineData: {
+                        mimeType: imageInput.files[0].type,
+                        data: selectedImageBase64
+                    }
+                });
+                displayImageUrl = `data:${imageInput.files[0].type};base64,${selectedImageBase64}`;
+            }
+            if (userMessage) {
+                messageParts.push({ text: userMessage });
+            }
+
+            addMessageToChat('user', userMessage, displayImageUrl);
+            chatHistory.push({ role: "user", parts: messageParts });
+            
             input.value = '';
+            imageInput.value = ''; // Clear file input
+            selectedImageBase64 = null; // Clear selected image data
+            imagePreviewContainer.style.display = 'none';
+            document.getElementById('image-preview').src = '#';
+            document.getElementById('image-preview').classList.add('hidden');
+            document.getElementById('remove-image-btn').classList.add('hidden');
+
 
             const typingIndicator = document.createElement('div');
             typingIndicator.classList.add('chat-bubble', 'ai-bubble');
@@ -330,10 +654,7 @@
                     const payload = {
                         contents: chatHistory
                     };
-                    // ¡¡¡ IMPORTANTE !!!
-                    // Esta es la clave de API que proporcionaste.
-                    // ¡Asegúrate de que sea la correcta si la cambias en el futuro!
-                    const apiKey = "AIzaSyANfNKboqzntMyU5qiOWa4GTI9hBdM8OLc"; 
+                    const apiKey = ""; // Canvas will automatically provide this at runtime
 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
@@ -372,16 +693,60 @@
 
             document.getElementById('typing-indicator').remove();
 
-            // --- Post-procesamiento para limpiar símbolos ---
-            aiResponseText = aiResponseText.replace(/\*\*(.*?)\*\*/g, '$1'); // Eliminar negritas (**)
-            aiResponseText = aiResponseText.replace(/^\*\s*/gm, '');        // Eliminar viñetas de lista (*) al inicio de línea
-            aiResponseText = aiResponseText.replace(/\$(.*?)\$/g, '$1');    // Eliminar delimitadores de LaTeX ($)
-            aiResponseText = aiResponseText.replace(/\$\$(.*?)\$\$/g, '$1'); // Eliminar delimitadores de LaTeX doble ($$)
-            // --- Fin del post-procesamiento ---
+            // --- Post-processing for AI response formatting ---
+            // Replace markdown bold (**)
+            aiResponseText = aiResponseText.replace(/\*\*(.*?)\*\*/g, '$1');
+            // Replace markdown list bullets (*) with '• ' and ensure new lines
+            // This regex handles multiple asterisks on separate lines or within a single line
+            aiResponseText = aiResponseText.replace(/(\n|^)\*\s*/gm, '\n• ');
+            // Remove LaTeX delimiters ($)
+            aiResponseText = aiResponseText.replace(/\$(.*?)\$/g, '$1');
+            aiResponseText = aiResponseText.replace(/\$\$(.*?)\$\$/g, '$1');
+            // Ensure a leading bullet point doesn't have an extra newline if it's the very first character
+            if (aiResponseText.startsWith('\n• ')) {
+                aiResponseText = aiResponseText.substring(1);
+            }
+            // --- End post-processing ---
 
             addMessageToChat('ai', aiResponseText);
             chatHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
         }
+
+        // --- Image Handling for Chat ---
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imgPreview = document.getElementById('image-preview');
+                    const previewContainer = document.getElementById('image-preview-container');
+                    const removeBtn = document.getElementById('remove-image-btn');
+
+                    imgPreview.src = e.target.result;
+                    imgPreview.classList.remove('hidden');
+                    previewContainer.style.display = 'flex';
+                    removeBtn.classList.remove('hidden');
+
+                    // Store Base64 data (without the data:image/jpeg;base64, prefix)
+                    selectedImageBase64 = e.target.result.split(',')[1];
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('remove-image-btn').addEventListener('click', () => {
+            const imageInput = document.getElementById('image-input');
+            const imgPreview = document.getElementById('image-preview');
+            const previewContainer = document.getElementById('image-preview-container');
+            const removeBtn = document.getElementById('remove-image-btn');
+
+            imageInput.value = ''; // Clear file input
+            selectedImageBase64 = null; // Clear selected image data
+            imgPreview.src = '#';
+            imgPreview.classList.add('hidden');
+            previewContainer.style.display = 'none';
+            removeBtn.classList.add('hidden');
+        });
 
         // --- Lógica de Reconocimiento de Voz (Speech-to-Text) ---
         function setupSpeechRecognition() {
@@ -447,7 +812,7 @@
 
             const connectButton = document.getElementById('bt-connect-btn');
             const buttonSpan = connectButton.querySelector('span');
-
+            
             if (bluetoothDevice && bluetoothDevice.gatt.connected) {
                 bluetoothDevice.gatt.disconnect();
                 buttonSpan.textContent = 'Conectar vía Bluetooth';
@@ -455,6 +820,7 @@
                 connectButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
                 showToast("Robot desconectado.");
                 bluetoothDevice = null;
+                document.getElementById('battery-status-container').classList.remove('visible'); // Hide battery
                 return;
             }
 
@@ -472,6 +838,11 @@
                 connectButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
                 connectButton.classList.add('bg-green-500', 'hover:bg-green-600');
                 showToast(`¡Conectado a ${bluetoothDevice.name || 'tu robot'}!`);
+
+                // Show and update battery level on successful connection
+                document.getElementById('battery-status-container').classList.add('visible');
+                updateRobotBatteryLevel(); // Update simulated battery
+
             } catch (error) {
                 let errorMessage = "Error al conectar. Revisa la consola.";
                 if (error.name === 'NotFoundError') {
@@ -484,6 +855,9 @@
                 showToast(errorMessage);
                 console.error("Bluetooth connection error:", error);
                 buttonSpan.textContent = 'Conectar vía Bluetooth';
+                connectButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                connectButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                document.getElementById('battery-status-container').classList.remove('visible'); // Hide battery on error
             } finally {
                 connectButton.disabled = false;
             }
@@ -495,6 +869,7 @@
                 return;
             }
             showToast(`Moviendo robot: ${direction}`);
+            console.log(`Simulando envío de comando: ${direction}`);
             // This is where the logic to send the command to the Bluetooth device would go.
             // Example (requires defining a characteristic and service UUIDs):
             /*
@@ -514,11 +889,65 @@
                 console.error("Error sending command to Bluetooth device:", error);
             }
             */
-            console.log(`Simulating sending command: ${direction}`);
         }
 
-        // Initialize speech recognition when the script loads.
+        // --- Simulación del Nivel de Batería del Robot ---
+        function updateRobotBatteryLevel() {
+            const batteryElement = document.getElementById('robot-battery-level');
+            const randomBattery = Math.floor(Math.random() * (100 - 40 + 1)) + 40; // Simulate 40-100%
+            batteryElement.textContent = `${randomBattery}%`;
+            // Change color based on battery level
+            if (randomBattery < 20) {
+                batteryElement.classList.remove('text-green-600', 'text-yellow-600', 'dark:text-green-400', 'dark:text-yellow-400');
+                batteryElement.classList.add('text-red-600', 'dark:text-red-400');
+            } else if (randomBattery < 50) {
+                batteryElement.classList.remove('text-green-600', 'text-red-600', 'dark:text-green-400', 'dark:text-red-400');
+                batteryElement.classList.add('text-yellow-600', 'dark:text-yellow-400');
+            } else {
+                batteryElement.classList.remove('text-yellow-600', 'text-red-600', 'dark:text-yellow-400', 'dark:text-red-400');
+                batteryElement.classList.add('text-green-600', 'dark:text-green-400');
+            }
+        }
+
+        // --- Dark Mode Logic ---
+        function applySavedTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark');
+            } else {
+                document.body.classList.remove('dark');
+            }
+            // Update icon for both dark mode toggles
+            updateDarkModeIcon('dark-mode-icon');
+            updateDarkModeIcon('dark-mode-icon-robot');
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            if (document.body.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+            // Update icon for both dark mode toggles
+            updateDarkModeIcon('dark-mode-icon');
+            updateDarkModeIcon('dark-mode-icon-robot');
+        }
+
+        function updateDarkModeIcon(iconId) {
+            const icon = document.getElementById(iconId);
+            if (icon) { // Check if the icon element exists
+                if (document.body.classList.contains('dark')) {
+                    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>'; // Moon icon
+                } else {
+                    icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>'; // Sun icon
+                }
+            }
+        }
+        
+        // Initialize speech recognition and apply theme when the script loads
         setupSpeechRecognition();
+        applySavedTheme();
     </script>
 </body>
 </html>
