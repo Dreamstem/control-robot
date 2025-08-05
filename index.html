@@ -76,9 +76,7 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center min-h-screen p-4">
-
     <div id="toast-notification" class="toast"></div>
-
     <div class="w-full max-w-md mx-auto">
         <!-- Pantalla de Login -->
         <div id="login-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl">
@@ -126,11 +124,11 @@
                 </div>
             </div>
             <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                 <button onclick="showChat()" class="w-full py-3 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600 transition-colors">Chatear con Robot</button>
-                 <button onclick="goToControl()" class="w-full py-3 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-900 transition-colors">Control del Robot</button>
+                <button onclick="showChat()" class="w-full py-3 bg-teal-500 text-white font-semibold rounded-lg shadow-md hover:bg-teal-600 transition-colors">Chatear con DREAMSTEAM</button>
+                <button onclick="goToControl()" class="w-full py-3 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-900 transition-colors">Control del Robot</button>
             </div>
         </div>
-        
+
         <!-- Pantallas de Detalles de Asignaturas -->
         <div id="subject-detail-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl hidden">
             <h2 id="subject-title" class="text-3xl font-bold text-gray-800 mb-4"></h2>
@@ -138,11 +136,10 @@
             <button onclick="switchScreen('subject-detail-screen', 'subjects-screen')" class="w-full mt-8 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
         </div>
 
-
         <!-- Pantalla de Chat con el Robot -->
         <div id="chat-screen" class="screen bg-white rounded-2xl shadow-2xl hidden flex flex-col h-[80vh] max-h-[700px]">
             <div class="p-4 border-b">
-                <h2 class="text-xl font-bold text-center text-gray-800">Chat con DREAMSTEM</h2>
+                <h2 class="text-xl font-bold text-center text-gray-800">Chat con DREAMSTEAM</h2>
             </div>
             <div id="chat-window" class="flex-1 p-4 space-y-4 overflow-y-auto flex flex-col">
                 <!-- Mensajes del chat se añadirán aquí -->
@@ -158,9 +155,8 @@
                     </button>
                 </div>
             </div>
-             <button onclick="switchScreen('chat-screen', 'subjects-screen')" class="w-full mt-2 mb-4 mx-auto max-w-[90%] py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
+            <button onclick="switchScreen('chat-screen', 'subjects-screen')" class="w-full mt-2 mb-4 mx-auto max-w-[90%] py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
         </div>
-
 
         <!-- Pantalla de Control del Robot -->
         <div id="robot-screen" class="screen bg-white p-8 rounded-2xl shadow-2xl hidden">
@@ -180,16 +176,17 @@
                 <button onmousedown="moveRobot('backward')" onmouseup="moveRobot('stop')" ontouchstart="moveRobot('backward')" ontouchend="moveRobot('stop')" class="w-20 h-20 bg-gray-200 rounded-full text-3xl font-bold text-gray-700 hover:bg-gray-300 transition-colors flex items-center justify-center">↓</button>
                 <div></div>
             </div>
-             <button onclick="switchScreen('robot-screen', 'subjects-screen')" class="w-full mt-8 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
+            <button onclick="switchScreen('robot-screen', 'subjects-screen')" class="w-full mt-8 py-2 text-sm bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">Volver a Asignaturas</button>
         </div>
     </div>
 
     <script>
         // --- Estado de la aplicación y variables globales ---
         let bluetoothDevice = null;
-        let chatHistory = [];
         let recognition = null;
         let isListening = false;
+        let userName = null; // Variable para guardar el nombre del usuario
+        let chatHistory = []; // History for the AI model
 
         // --- Contenido de las asignaturas ---
         const subjectDetails = {
@@ -231,15 +228,25 @@
             });
         }
 
-        function showRegister() { switchScreen('login-screen', 'register-screen'); }
-        function showLogin() { switchScreen('register-screen', 'login-screen'); }
-        function goToControl() { switchScreen('subjects-screen', 'robot-screen'); }
-        function showChat() { 
+        function showRegister() {
+            switchScreen('login-screen', 'register-screen');
+        }
+
+        function showLogin() {
+            switchScreen('register-screen', 'login-screen');
+        }
+
+        function goToControl() {
+            switchScreen('subjects-screen', 'robot-screen');
+        }
+
+        function showChat() {
             switchScreen('subjects-screen', 'chat-screen');
-            if (document.getElementById('chat-window').childElementCount === 0) {
-                 setTimeout(() => {
-                    const welcomeMsg = "¡Hola! Soy DREAMSTEM. Pregúntame lo que sea o presiona el micrófono para hablar.";
+            if (chatHistory.length === 0) { // Only add welcome message if chat is empty
+                setTimeout(() => {
+                    const welcomeMsg = `¡Hola${userName ? ', ' + userName : ''}! Soy DREAMSTEAM. Estoy listo para resolver tus dudas de STEAM. ¿Qué quieres aprender hoy?`;
                     addMessageToChat('ai', welcomeMsg);
+                    chatHistory.push({ role: "model", parts: [{ text: welcomeMsg }] });
                 }, 500);
             }
         }
@@ -260,20 +267,24 @@
                 showToast("Por favor, ingresa correo y contraseña.");
                 return;
             }
-            showToast("¡Bienvenido!");
+            const welcomeMessage = userName ? `¡Bienvenido de vuelta, ${userName}!` : "¡Bienvenido!";
+            showToast(welcomeMessage);
             switchScreen('login-screen', 'subjects-screen');
         }
 
         function register() {
-            if (!document.getElementById('reg-name').value || !document.getElementById('reg-email').value || !document.getElementById('reg-password').value) {
+            const nameInput = document.getElementById('reg-name');
+            if (!nameInput.value || !document.getElementById('reg-email').value || !document.getElementById('reg-password').value) {
                 showToast("Por favor, completa todos los campos.");
                 return;
             }
-            showToast("Registro exitoso. Ahora puedes iniciar sesión.");
+            // Guardamos el primer nombre del usuario para personalizar la experiencia
+            userName = nameInput.value.trim().split(' ')[0];
+            showToast(`Registro exitoso, ${userName}. Ahora puedes iniciar sesión.`);
             showLogin();
         }
 
-        // --- Lógica del Chat con IA ---
+        // --- Lógica del Chat con IA (Integración con Gemini API) ---
         function addMessageToChat(sender, text) {
             const chatWindow = document.getElementById('chat-window');
             const bubble = document.createElement('div');
@@ -282,66 +293,80 @@
             chatWindow.appendChild(bubble);
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
-        
+
         async function sendMessage() {
             const input = document.getElementById('chat-input');
             const userMessage = input.value.trim();
             if (!userMessage) return;
 
             addMessageToChat('user', userMessage);
-            input.value = '';
-            
             chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            input.value = '';
 
             const typingIndicator = document.createElement('div');
             typingIndicator.classList.add('chat-bubble', 'ai-bubble');
             typingIndicator.innerHTML = '<span class="animate-pulse">Pensando...</span>';
             typingIndicator.id = 'typing-indicator';
             document.getElementById('chat-window').appendChild(typingIndicator);
+            document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
 
-            try {
-                const aiResponseText = await getAiResponse(userMessage);
-                document.getElementById('typing-indicator').remove();
-                addMessageToChat('ai', aiResponseText);
-                chatHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
-            } catch (error) {
-                 document.getElementById('typing-indicator').remove();
-                 const errorMsg = "Lo siento, no pude procesar tu solicitud. Inténtalo de nuevo.";
-                 addMessageToChat('ai', errorMsg);
-                 console.error("Error fetching AI response:", error);
+            let aiResponseText = "Lo siento, no pude procesar tu solicitud en este momento. Por favor, inténtalo de nuevo más tarde.";
+            let retries = 0;
+            const maxRetries = 3;
+            const baseDelay = 1000; // 1 second
+
+            while (retries < maxRetries) {
+                try {
+                    const payload = {
+                        contents: chatHistory
+                    };
+                    const apiKey = ""; // If you want to use models other than gemini-2.5-flash-preview-05-20 or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('API Error:', errorData);
+                        throw new Error(`HTTP error! status: ${response.status} - ${errorData.error.message}`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        aiResponseText = result.candidates[0].content.parts[0].text;
+                        break; // Success, exit loop
+                    } else {
+                        console.warn('Unexpected API response structure:', result);
+                        aiResponseText = "No pude obtener una respuesta clara. ¿Podrías reformular tu pregunta?";
+                    }
+                } catch (error) {
+                    console.error('Error fetching AI response:', error);
+                    retries++;
+                    if (retries < maxRetries) {
+                        const delay = baseDelay * Math.pow(2, retries - 1); // Exponential backoff
+                        await new Promise(res => setTimeout(res, delay));
+                    }
+                }
             }
-        }
 
-        async function getAiResponse(prompt) {
-            const apiKey = ""; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-            
-            // System instruction to guide the model's behavior
-            const systemInstruction = {
-                role: "system",
-                parts: [{ text: "Eres DREAMSTEM, un asistente de IA superinteligente con todo el poder de la IA de Google. Tu propósito es ser un tutor experto para estudiantes de STEAM. Responde a todas las preguntas de manera completa y profunda, resolviendo problemas matemáticos complejos, desglosando conceptos científicos, explicando ingeniería y tecnología, y analizando problemas razonados. Actúa como un genio amigable y servicial." }]
-            };
+            document.getElementById('typing-indicator').remove();
 
-            const payload = {
-                contents: [systemInstruction, ...chatHistory.slice(-5)] // Add instruction before history
-            };
+            // --- Post-procesamiento para limpiar símbolos ---
+            aiResponseText = aiResponseText.replace(/\*\*(.*?)\*\*/g, '$1'); // Eliminar negritas (**)
+            aiResponseText = aiResponseText.replace(/^\*\s*/gm, '');        // Eliminar viñetas de lista (*) al inicio de línea
+            aiResponseText = aiResponseText.replace(/\$(.*?)\$/g, '$1');    // Eliminar delimitadores de LaTeX ($)
+            aiResponseText = aiResponseText.replace(/\$\$(.*?)\$\$/g, '$1'); // Eliminar delimitadores de LaTeX doble ($$)
+            // --- Fin del post-procesamiento ---
 
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
-
-            const result = await response.json();
-            
-            if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts) {
-                return result.candidates[0].content.parts[0].text;
-            } else {
-                console.error("Unexpected API response structure:", result);
-                return "No pude encontrar una respuesta válida.";
-            }
+            addMessageToChat('ai', aiResponseText);
+            chatHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
         }
 
         // --- Lógica de Reconocimiento de Voz (Speech-to-Text) ---
@@ -363,12 +388,20 @@
                 recognition.onresult = (event) => {
                     const transcript = event.results[0][0].transcript;
                     document.getElementById('chat-input').value = transcript;
-                    sendMessage(); // Send message automatically after transcription
+                    sendMessage(); // Send message automatically after transcription.
                 };
 
                 recognition.onerror = (event) => {
-                    showToast(`Error de voz: ${event.error}`);
-                    console.error("Speech recognition error", event);
+                    let errorMessage = `Error de voz: ${event.error}`;
+                    if (event.error === 'no-speech') {
+                        errorMessage = "No te escuché. Por favor, intenta hablar más fuerte.";
+                    } else if (event.error === 'audio-capture') {
+                        errorMessage = "No se encontró un micrófono. Revisa que esté bien conectado.";
+                    } else if (event.error === 'not-allowed') {
+                        errorMessage = "Permiso para usar el micrófono denegado. Habilítalo en la configuración del sitio.";
+                    }
+                    showToast(errorMessage);
+                    console.error(`Speech recognition error: ${event.error}`, event);
                 };
 
                 recognition.onend = () => {
@@ -400,11 +433,12 @@
 
             const connectButton = document.getElementById('bt-connect-btn');
             const buttonSpan = connectButton.querySelector('span');
-            
+
             if (bluetoothDevice && bluetoothDevice.gatt.connected) {
                 bluetoothDevice.gatt.disconnect();
                 buttonSpan.textContent = 'Conectar vía Bluetooth';
-                connectButton.style.backgroundColor = '';
+                connectButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                connectButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
                 showToast("Robot desconectado.");
                 bluetoothDevice = null;
                 return;
@@ -416,22 +450,26 @@
             try {
                 bluetoothDevice = await navigator.bluetooth.requestDevice({
                     acceptAllDevices: true,
+                    // You might want to specify services or names for more targeted discovery
+                    // filters: [{ services: ['your_service_uuid'] }]
                 });
-
                 const server = await bluetoothDevice.gatt.connect();
-                
-                buttonSpan.textContent = `Conectado a ${bluetoothDevice.name}`;
-                connectButton.style.backgroundColor = '#28a745';
-                showToast(`¡Conectado a ${bluetoothDevice.name}!`);
-
+                buttonSpan.textContent = `Conectado a ${bluetoothDevice.name || 'Dispositivo Desconocido'}`;
+                connectButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                connectButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                showToast(`¡Conectado a ${bluetoothDevice.name || 'tu robot'}!`);
             } catch (error) {
                 let errorMessage = "Error al conectar. Revisa la consola.";
                 if (error.name === 'NotFoundError') {
-                    errorMessage = "No se seleccionó ningún dispositivo.";
+                    errorMessage = "No se seleccionó ningún dispositivo Bluetooth.";
+                } else if (error.name === 'NetworkError') {
+                    errorMessage = "Error de red o Bluetooth no disponible. Asegúrate de que Bluetooth esté activado.";
+                } else if (error.name === 'NotAllowedError') {
+                    errorMessage = "Permiso de Bluetooth denegado. Asegúrate de permitir el acceso.";
                 }
                 showToast(errorMessage);
+                console.error("Bluetooth connection error:", error);
                 buttonSpan.textContent = 'Conectar vía Bluetooth';
-                connectButton.style.backgroundColor = '';
             } finally {
                 connectButton.disabled = false;
             }
@@ -439,16 +477,34 @@
 
         function moveRobot(direction) {
             if (!bluetoothDevice || !bluetoothDevice.gatt.connected) {
-                showToast("El robot no está conectado.");
+                showToast("El robot no está conectado. Conéctate vía Bluetooth primero.");
                 return;
             }
             showToast(`Moviendo robot: ${direction}`);
-            console.log(`Simulando envío de comando: ${direction}`);
+            // This is where the logic to send the command to the Bluetooth device would go.
+            // Example (requires defining a characteristic and service UUIDs):
+            /*
+            try {
+                const serviceUuid = 'YOUR_SERVICE_UUID'; // Replace with your robot's service UUID
+                const characteristicUuid = 'YOUR_CHARACTERISTIC_UUID'; // Replace with your robot's characteristic UUID
+
+                const service = await bluetoothDevice.gatt.getPrimaryService(serviceUuid);
+                const characteristic = await service.getCharacteristic(characteristicUuid);
+
+                // Example: Send a simple text command
+                const encoder = new TextEncoder();
+                await characteristic.writeValue(encoder.encode(direction));
+                console.log(`Command '${direction}' sent to robot.`);
+            } catch (error) {
+                showToast(`Error al enviar comando: ${error.message}`);
+                console.error("Error sending command to Bluetooth device:", error);
+            }
+            */
+            console.log(`Simulating sending command: ${direction}`);
         }
-        
-        // Initialize speech recognition setup when the script loads
+
+        // Initialize speech recognition when the script loads.
         setupSpeechRecognition();
     </script>
 </body>
 </html>
-
