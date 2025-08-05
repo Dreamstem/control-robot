@@ -100,7 +100,11 @@
             background-color: #334155; /* slate-700 */
             color: #e2e8f0; /* gray-200 */
         }
-        /* Removed .chat-bubble img styles as image functionality is removed */
+        .chat-bubble img {
+            max-width: 100%;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
 
         .subject-card {
             cursor: pointer;
@@ -220,7 +224,50 @@
             color: #a0aec0; /* gray-400 */
         }
 
-        /* Removed image-preview-container and its child styles */
+        /* Image preview in chat input */
+        #image-preview-container {
+            display: none; /* Hidden by default */
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background-color: #f0f4f8; /* light gray */
+            position: relative;
+        }
+        body.dark #image-preview-container {
+            background-color: #334155; /* slate-700 */
+        }
+        #image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 0.25rem;
+            object-fit: cover;
+        }
+        #remove-image-btn {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        /* Styles for dynamic send button */
+        #send-button-container {
+            display: none; /* Hidden by default */
+        }
+        #send-button-container.visible {
+            display: block;
+        }
+        #mic-button-container.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center min-h-screen p-4">
@@ -229,7 +276,19 @@
     <div class="w-full max-w-md mx-auto">
         <!-- Pantalla de Login -->
         <div id="login-screen" class="screen">
-            <h1 class="text-3xl font-bold text-center mb-2 mt-8">DREAMSTEAM</h1>
+            <div class="flex justify-center mb-4">
+                <svg class="w-24 h-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+                    <circle cx="256" cy="256" r="256" fill="#0e4d73"/>
+                    <path d="M256 120c-40 0-72 32-72 72v48h-16c-18 0-32 14-32 32v96c0 18 14 32 32 32h176c18 0 32-14 32-32v-96c0-18-14-32-32-32h-16v-48c0-40-32-72-72-72z" fill="#f8f8f8"/>
+                    <rect x="200" y="160" width="112" height="96" rx="48" fill="#6ec1e4"/>
+                    <circle cx="232" cy="200" r="8" fill="#0e4d73"/>
+                    <circle cx="280" cy="200" r="8" fill="#0e4d73"/>
+                    <path d="M232 224c8 8 40 8 48 0" stroke="#0e4d73" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="256" cy="96" r="12" fill="#f8f8f8"/>
+                    <rect x="248" y="84" width="16" height="20" fill="#f8f8f8"/>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold text-center mb-2">DREAMSTEAM</h1>
             <p class="text-center text-gray-500 mb-8">Inicia sesión para continuar</p>
             <div class="space-y-4">
                 <input type="email" placeholder="Correo electrónico" id="email" class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -254,7 +313,19 @@
         <!-- Pantalla de Asignaturas (con botones de perfil y modo oscuro) -->
         <div id="subjects-screen" class="screen hidden">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold">Asignaturas STEAM</h2>
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+                        <circle cx="256" cy="256" r="256" fill="#0e4d73"/>
+                        <path d="M256 120c-40 0-72 32-72 72v48h-16c-18 0-32 14-32 32v96c0 18 14 32 32 32h176c18 0 32-14 32-32v-96c0-18-14-32-32-32h-16v-48c0-40-32-72-72-72z" fill="#f8f8f8"/>
+                        <rect x="200" y="160" width="112" height="96" rx="48" fill="#6ec1e4"/>
+                        <circle cx="232" cy="200" r="8" fill="#0e4d73"/>
+                        <circle cx="280" cy="200" r="8" fill="#0e4d73"/>
+                        <path d="M232 224c8 8 40 8 48 0" stroke="#0e4d73" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="256" cy="96" r="12" fill="#f8f8f8"/>
+                        <rect x="248" y="84" width="16" height="20" fill="#f8f8f8"/>
+                    </svg>
+                    <h2 class="text-3xl font-bold">Asignaturas STEAM</h2>
+                </div>
                 <div class="flex space-x-2">
                     <button onclick="toggleDarkMode()" class="p-2 rounded-full btn-secondary" title="Alternar Modo Oscuro">
                         <svg id="dark-mode-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -341,16 +412,29 @@
                 <!-- Mensajes del chat se añadirán aquí -->
             </div>
             <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-                <!-- Removed Image Preview Container -->
+                <!-- Image Preview Container -->
+                <div id="image-preview-container" class="flex items-center space-x-2">
+                    <img id="image-preview" src="#" alt="Image Preview" class="hidden">
+                    <button id="remove-image-btn" class="hidden">X</button>
+                </div>
                 <div class="flex items-center space-x-2 mt-2">
-                    <!-- Removed image input and its button -->
-                    <input type="text" id="chat-input" placeholder="Escribe un mensaje o describe tu imagen..." class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button id="mic-btn" onclick="toggleVoiceRecognition()" class="p-3 text-gray-500 rounded-full hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+                    <input type="file" id="image-input" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+                    <button onclick="document.getElementById('image-input').click()" class="p-3 text-gray-500 rounded-full hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600" title="Adjuntar Imagen">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                     </button>
-                    <button onclick="sendMessage()" class="p-3 btn-primary rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                    </button>
+                    <input type="text" id="chat-input" placeholder="Escribe un mensaje o describe tu imagen..." class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" oninput="updateSendButtonState()">
+                    
+                    <!-- Dynamic Send/Mic Buttons -->
+                    <div id="mic-button-container">
+                        <button id="mic-btn" onclick="toggleVoiceRecognition()" class="p-3 text-gray-500 rounded-full hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
+                        </button>
+                    </div>
+                    <div id="send-button-container">
+                        <button onclick="sendMessage()" class="p-3 btn-primary rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
             <button onclick="switchScreen('chat-screen', 'subjects-screen')" class="w-full mt-2 mb-4 mx-auto max-w-[90%] py-2 text-sm btn-secondary">Volver a Asignaturas</button>
@@ -359,7 +443,19 @@
         <!-- Pantalla de Control del Robot -->
         <div id="robot-screen" class="screen hidden">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold">Control del Robot</h2>
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+                        <circle cx="256" cy="256" r="256" fill="#0e4d73"/>
+                        <path d="M256 120c-40 0-72 32-72 72v48h-16c-18 0-32 14-32 32v96c0 18 14 32 32 32h176c18 0 32-14 32-32v-96c0-18-14-32-32-32h-16v-48c0-40-32-72-72-72z" fill="#f8f8f8"/>
+                        <rect x="200" y="160" width="112" height="96" rx="48" fill="#6ec1e4"/>
+                        <circle cx="232" cy="200" r="8" fill="#0e4d73"/>
+                        <circle cx="280" cy="200" r="8" fill="#0e4d73"/>
+                        <path d="M232 224c8 8 40 8 48 0" stroke="#0e4d73" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="256" cy="96" r="12" fill="#f8f8f8"/>
+                        <rect x="248" y="84" width="16" height="20" fill="#f8f8f8"/>
+                    </svg>
+                    <h2 class="text-3xl font-bold">Control del Robot</h2>
+                </div>
                 <div class="flex space-x-2">
                     <button onclick="toggleDarkMode()" class="p-2 rounded-full btn-secondary" title="Alternar Modo Oscuro">
                         <svg id="dark-mode-icon-robot" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -399,7 +495,7 @@
         let chatHistory = []; // History for the AI model
         let recognition = null;
         let isListening = false;
-        // let selectedImageBase64 = null; // Removed as image functionality is removed
+        let selectedImageBase64 = null; // To store the selected image data
 
         // --- Contenido de las asignaturas ---
         const subjectDetails = {
@@ -471,11 +567,13 @@
 
         function showChat() {
             switchScreen('subjects-screen', 'chat-screen');
+            // Ensure initial button state is correct when chat screen is shown
+            updateSendButtonState();
             if (document.getElementById('chat-window').childElementCount === 0) {
                 // System instruction for the AI about its identity and purpose
                 chatHistory.push({
                     role: "user",
-                    parts: [{ text: `Eres DREAMSTEAM, un robot educativo diseñado por ingenieros de la Universidad Tecnológica de Santa Catarina (UTSC). Tu propósito es ayudar a estudiantes con temas de Ciencia, Tecnología, Ingeniería y Matemáticas (STEAM). Responde de manera amigable, clara y completa. Si la respuesta es una lista o tiene varios puntos, usa viñetas con el símbolo '•' y saltos de línea para cada punto. Asegúrate de que tus respuestas sean siempre bien estructuradas y fáciles de leer.` }]
+                    parts: [{ text: `Eres DREAMSTEAM, un robot educativo diseñado por ingenieros de la Universidad Tecnológica de Santa Catarina (UTSC). Tu propósito es ayudar a estudiantes con temas de Ciencia, Tecnología, Ingeniería y Matemáticas (STEAM). Responde de manera amigable, clara y completa. Si la respuesta es una lista o tiene varios puntos, usa viñetas con el símbolo '•' y saltos de línea para cada punto. También puedes interpretar imágenes que te envíen. Asegúrate de que tus respuestas sean siempre bien estructuradas y fáciles de leer.` }]
                 });
                 chatHistory.push({
                     role: "model",
@@ -535,12 +633,17 @@
         }
 
         // --- Lógica del Chat con IA (Integración con Gemini API) ---
-        function addMessageToChat(sender, text) { // Removed imageUrl parameter
+        function addMessageToChat(sender, text, imageUrl = null) {
             const chatWindow = document.getElementById('chat-window');
             const bubble = document.createElement('div');
             bubble.classList.add('chat-bubble', sender === 'user' ? 'user-bubble' : 'ai-bubble');
             
-            // Removed if (imageUrl) block
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = 'Imagen enviada';
+                bubble.appendChild(img);
+            }
             if (text) {
                 const textNode = document.createElement('div');
                 textNode.textContent = text;
@@ -553,19 +656,43 @@
         async function sendMessage() {
             const input = document.getElementById('chat-input');
             const userMessage = input.value.trim();
-            // Removed imageInput, imagePreviewContainer, selectedImageBase64 variables
+            const imageInput = document.getElementById('image-input');
+            const imagePreviewContainer = document.getElementById('image-preview-container');
 
-            if (!userMessage) { // Simplified check
-                showToast("Por favor, escribe un mensaje."); // Updated toast message
+            if (!userMessage && !selectedImageBase64) {
+                showToast("Por favor, escribe un mensaje o selecciona una imagen.");
                 return;
             }
 
-            // Removed messageParts and displayImageUrl logic
-            addMessageToChat('user', userMessage); // Removed displayImageUrl argument
-            chatHistory.push({ role: "user", parts: [{ text: userMessage }] }); // Simplified chatHistory push
+            const messageParts = [];
+            let displayImageUrl = null;
+
+            if (selectedImageBase64) {
+                messageParts.push({
+                    inlineData: {
+                        mimeType: imageInput.files[0].type,
+                        data: selectedImageBase64
+                    }
+                });
+                displayImageUrl = `data:${imageInput.files[0].type};base64,${selectedImageBase64}`;
+            }
+            if (userMessage) {
+                messageParts.push({ text: userMessage });
+            }
+
+            addMessageToChat('user', userMessage, displayImageUrl);
+            chatHistory.push({ role: "user", parts: messageParts });
             
             input.value = '';
-            // Removed lines for clearing image input and preview
+            imageInput.value = ''; // Clear file input
+            selectedImageBase64 = null; // Clear selected image data
+            imagePreviewContainer.style.display = 'none';
+            document.getElementById('image-preview').src = '#';
+            document.getElementById('image-preview').classList.add('hidden');
+            document.getElementById('remove-image-btn').classList.add('hidden');
+
+            // Update button state after sending message
+            updateSendButtonState();
 
             const typingIndicator = document.createElement('div');
             typingIndicator.classList.add('chat-bubble', 'ai-bubble');
@@ -585,7 +712,7 @@
                         contents: chatHistory
                     };
                     // API Key for GitHub
-                    const apiKey = "AIzaSyCxIwOXhgZ0fFVNCUfL4Lp9LbNgQ5kTGbs"; 
+                    const apiKey = "AIzaSyA5O5rvltuTOEf2NsST7LZgVUpKzwO9DHw"; 
 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
@@ -643,9 +770,47 @@
             chatHistory.push({ role: "model", parts: [{ text: aiResponseText }] });
         }
 
-        // --- Removed Image Handling for Chat functions (handleImageSelect and remove-image-btn listener) ---
-        // function handleImageSelect(event) { ... }
-        // document.getElementById('remove-image-btn').addEventListener('click', () => { ... });
+        // --- Image Handling for Chat ---
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imgPreview = document.getElementById('image-preview');
+                    const previewContainer = document.getElementById('image-preview-container');
+                    const removeBtn = document.getElementById('remove-image-btn');
+
+                    imgPreview.src = e.target.result;
+                    imgPreview.classList.remove('hidden');
+                    previewContainer.style.display = 'flex';
+                    removeBtn.classList.remove('hidden');
+
+                    // Store Base64 data (without the data:image/jpeg;base64, prefix)
+                    selectedImageBase64 = e.target.result.split(',')[1];
+
+                    // If an image is selected, show the send button
+                    updateSendButtonState();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('remove-image-btn').addEventListener('click', () => {
+            const imageInput = document.getElementById('image-input');
+            const imgPreview = document.getElementById('image-preview');
+            const previewContainer = document.getElementById('image-preview-container');
+            const removeBtn = document.getElementById('remove-image-btn');
+
+            imageInput.value = ''; // Clear file input
+            selectedImageBase64 = null; // Clear selected image data
+            imgPreview.src = '#';
+            imgPreview.classList.add('hidden');
+            previewContainer.style.display = 'none';
+            removeBtn.classList.add('hidden');
+
+            // After removing image, update button state
+            updateSendButtonState();
+        });
 
         // --- Lógica de Reconocimiento de Voz (Speech-to-Text) ---
         function setupSpeechRecognition() {
@@ -685,6 +850,8 @@
                 recognition.onend = () => {
                     isListening = false;
                     document.getElementById('mic-btn').classList.remove('listening');
+                    // Ensure button state is updated after voice recognition ends
+                    updateSendButtonState();
                 };
             } else {
                 showToast("El reconocimiento de voz no es compatible con tu navegador.");
@@ -699,6 +866,22 @@
                 recognition.stop();
             } else {
                 recognition.start();
+            }
+        }
+
+        // --- Dynamic Send/Mic Button Logic ---
+        function updateSendButtonState() {
+            const chatInput = document.getElementById('chat-input');
+            const micButtonContainer = document.getElementById('mic-button-container');
+            const sendButtonContainer = document.getElementById('send-button-container');
+            
+            // Check if there's text in the input or an image selected
+            if (chatInput.value.trim().length > 0 || selectedImageBase64) {
+                micButtonContainer.classList.add('hidden');
+                sendButtonContainer.classList.add('visible');
+            } else {
+                micButtonContainer.classList.remove('hidden');
+                sendButtonContainer.classList.remove('visible');
             }
         }
 
@@ -847,6 +1030,8 @@
         // Initialize speech recognition and apply theme when the script loads
         setupSpeechRecognition();
         applySavedTheme();
+        // Initial call to set the correct button state when the page loads
+        document.addEventListener('DOMContentLoaded', updateSendButtonState);
     </script>
 </body>
 </html>
