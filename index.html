@@ -257,6 +257,71 @@
             font-size: 0.75rem;
             cursor: pointer;
         }
+
+        /* Chat input bar styling - Gemini-like */
+        .chat-input-bar {
+            background-color: white;
+            border-radius: 9999px; /* Fully rounded */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 0.5rem; /* Reduced padding for compact look */
+            display: flex;
+            align-items: center;
+            gap: 0.25rem; /* space-x-1 */
+            transition: background-color 0.3s ease;
+            border: 1px solid #e2e8f0; /* subtle border */
+        }
+        body.dark .chat-input-bar {
+            background-color: #1e293b; /* slate-800 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            border-color: #334155; /* slate-700 */
+        }
+        .chat-input-bar input[type="text"] {
+            flex-grow: 1;
+            padding: 0.75rem 1rem; /* py-3 px-4 */
+            border: none;
+            background-color: transparent; /* Transparent background */
+            border-radius: 9999px; /* Fully rounded */
+            font-size: 1rem;
+            outline: none;
+        }
+        body.dark .chat-input-bar input[type="text"] {
+            color: #e2e8f0; /* gray-200 */
+        }
+        .chat-input-bar .icon-button {
+            padding: 0.75rem; /* p-3 */
+            border-radius: 50%;
+            background-color: transparent;
+            color: #6b7280; /* gray-500 */
+            transition: background-color 0.2s ease, color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-input-bar .icon-button:hover {
+            background-color: #e2e8f0; /* gray-200 */
+            color: #1f2937; /* gray-800 */
+        }
+        body.dark .chat-input-bar .icon-button {
+            color: #94a3b8; /* slate-400 */
+        }
+        body.dark .chat-input-bar .icon-button:hover {
+            background-color: #475569; /* slate-600 */
+            color: #e2e8f0; /* gray-200 */
+        }
+        .chat-input-bar .send-button {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            padding: 0.75rem; /* p-3 */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            transition: background-color 0.2s ease;
+        }
+        .chat-input-bar .send-button:hover {
+            background-color: #2563eb; /* blue-600 */
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-500 to-teal-400 flex items-center justify-center min-h-screen p-4">
@@ -369,7 +434,7 @@
         </div>
 
         <!-- Pantalla de Chat con el Robot -->
-        <div id="chat-screen" class="screen hidden flex flex-col h-[95vh] max-h-[900px]"> <!-- Made chat screen larger -->
+        <div id="chat-screen" class="screen hidden flex flex-col h-[95vh] max-h-[900px] w-full"> <!-- Made chat screen larger and full width -->
             <div class="p-4 border-b border-gray-200 dark:border-gray-700">
                 <h2 class="text-xl font-bold text-center">Chat con DREAMSTEAM</h2>
             </div>
@@ -382,16 +447,16 @@
                     <img id="image-preview" src="#" alt="Image Preview" class="hidden">
                     <button id="remove-image-btn" class="hidden">X</button>
                 </div>
-                <div class="flex items-center space-x-2 mt-2">
+                <div class="chat-input-bar mt-2">
                     <input type="file" id="image-input" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
-                    <button onclick="document.getElementById('image-input').click()" class="p-3 text-gray-500 rounded-full hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600" title="Adjuntar Imagen">
+                    <button onclick="document.getElementById('image-input').click()" class="icon-button" title="Adjuntar Imagen">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                     </button>
-                    <input type="text" id="chat-input" placeholder="Escribe un mensaje o describe tu imagen..." class="w-full px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button id="mic-btn" onclick="toggleVoiceRecognition()" class="p-3 text-gray-500 rounded-full hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">
+                    <button id="mic-btn" onclick="toggleVoiceRecognition()" class="icon-button" title="Activar Micrófono">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line></svg>
                     </button>
-                    <button onclick="sendMessage()" class="p-3 btn-primary rounded-full">
+                    <input type="text" id="chat-input" placeholder="Escribe un mensaje o describe tu imagen..." class="flex-1">
+                    <button onclick="sendMessage()" class="send-button" title="Enviar Mensaje">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </button>
                 </div>
@@ -654,7 +719,7 @@
                     const payload = {
                         contents: chatHistory
                     };
-                    const apiKey = ""; // Canvas will automatically provide this at runtime
+                    const apiKey = ""; // IMPORTANT: Canvas will automatically provide this at runtime. DO NOT put your actual API key here.
 
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
