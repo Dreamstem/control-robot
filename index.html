@@ -242,7 +242,17 @@
 
         function showChat() {
             switchScreen('subjects-screen', 'chat-screen');
-            if (chatHistory.length === 0) { // Only add welcome message if chat is empty
+            if (chatHistory.length === 0) { // Only add welcome message and system instruction if chat is empty
+                // System instruction for the AI about its identity and purpose
+                chatHistory.push({
+                    role: "user",
+                    parts: [{ text: "Eres DREAMSTEAM, un robot educativo diseñado por ingenieros de la Universidad Tecnológica de Santa Catarina. Tu propósito es ayudar a estudiantes con temas de Ciencia, Tecnología, Ingeniería y Matemáticas (STEAM). Responde de manera amigable, clara y completa." }]
+                });
+                chatHistory.push({
+                    role: "model",
+                    parts: [{ text: "¡Entendido! Estoy listo para ayudar." }]
+                });
+
                 setTimeout(() => {
                     const welcomeMsg = `¡Hola${userName ? ', ' + userName : ''}! Soy DREAMSTEAM. Estoy listo para resolver tus dudas de STEAM. ¿Qué quieres aprender hoy?`;
                     addMessageToChat('ai', welcomeMsg);
@@ -320,7 +330,11 @@
                     const payload = {
                         contents: chatHistory
                     };
-                    const apiKey = ""; // If you want to use models other than gemini-2.5-flash-preview-05-20 or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+                    // ¡¡¡ IMPORTANTE !!!
+                    // Esta es la clave de API que proporcionaste.
+                    // ¡Asegúrate de que sea la correcta si la cambias en el futuro!
+                    const apiKey = "AIzaSyANfNKboqzntMyU5qiOWa4GTI9hBdM8OLc"; 
+
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
                     const response = await fetch(apiUrl, {
