@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DREAMSTEAM Robot Control</title>
-    <!-- ¡Aquí va la etiqueta de verificación de Google Search Console! -->
-    <!-- Reemplaza "TU_CODIGO_UNICO_QUE_TE_DA_GOOGLE" con el código que te dé Google. -->
-    <meta name="google-site-verification" content="TU_CODIGO_UNICO_QUE_TE_DA_GOOGLE" />
+    <!-- ¡Aquí está la meta etiqueta de verificación de Google Search Console! -->
+    <meta name="google-site-verification" content="DxWzq6orsVZ4wTTyPv21cri5ZKaZ_5Ef3oEQX1qxrDc" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -641,7 +640,7 @@
                     userName = userData.name || userEmail.split('@')[0];
                 } else {
                     const defaultName = auth.currentUser.email.split('@')[0];
-                    await setDoc(userDocRef, { name: defaultName, email: auth.currentUser.email, createdAt: new Date() });
+                    await setDoc(doc(db, "users", auth.currentUser.uid), { name: defaultName, email: auth.currentUser.email, createdAt: new Date() });
                     userName = defaultName;
                 }
             } catch (error) {
